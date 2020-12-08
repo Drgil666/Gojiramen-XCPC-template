@@ -1,0 +1,51 @@
+#include <algorithm>
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+using namespace std;
+int map[110][110];//这就是map数组，存储图
+int dis[10010];//dis数组，存储估计值
+int book[10010];//book[i]代表这个点有没有被当做源点去搜索过，1为有，0为没有。这样就不会重复搜索了。
+int n,m;
+void dijkstra(int u)//主函数，参数是源点编号
+{
+    memset(dis,88,sizeof(dis));//把dis数组附最大值（88不是十进制的88，其实很大）
+    int start=u;//先从源点搜索
+    book[start]=1;//标记源点已经搜索过
+    for(int i=1;i<=n;i++)
+    {
+        dis[i]=min(dis[i],map[start][i]);//先更新一遍
+    }
+    for(int i=1;i<=n-1;i++)
+    {
+        int minn=9999999;//代表的是最近点到源点的距离，start才代表最近的点、
+        for(int j=1;j<=n;j++)
+            if(book[j]==0 && minn>dis[j])
+            {
+                minn=dis[j];
+                start=j;//找到离源点最近的点，然后把编号记录下来，用于搜索。
+            }
+        book[start]=1;
+        for(int j=1;j<=n;j++)
+            dis[j]=min(dis[j],dis[start]+map[start][j]);//以新的点来更新dis。
+    }
+}
+int main()
+{
+    scanf("%d%d",&n,&m);
+    memset(map,88,sizeof(map));
+    for(int i=1;i<=m;i++)
+    {
+        int a,b,c;
+        scanf("%d%d%d",&a,&b,&c);
+        map[a][b]=c;
+    }
+    for(int i=1;i<=n;i++)
+        for(int j=1;j<=n;j++)
+            if(i==j)
+                map[i][j]=0;
+    dijkstra(1);//以1为起点。
+    for(int i=1;i<=n;i++)
+        printf("%d ",dis[i]);
+}
